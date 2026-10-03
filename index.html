@@ -7,7 +7,7 @@
 <meta name="description" content="A Google Sheets (Excel-compatible) trading journal and risk dashboard for NQ/MNQ prop-firm traders. Live “Room left today” meter, prop rules panel, futures position sizer, discipline tracking. One-time $19 digital download.">
 <meta property="og:title" content="FundedMeter — Know your room left today">
 <meta property="og:description" content="Google Sheets (Excel-compatible) journal & risk dashboard for NQ/MNQ prop traders. One-time $19 digital download.">
-<meta property="og:image" content="https://fundedmeter-prog.github.io/fundedmeter/img/dashboard.png">
+<meta property="og:image" content="https://fundedmeter-prog.github.io/fundedmeter/img/sheet-dashboard.png">
 <meta name="theme-color" content="#0c0e12">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230c0e12'/%3E%3Cpath d='M2.5 15.5a9.5 9.5 0 0 1 1.27-4.75' stroke='%23ff4d5e' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M4.72 9.39A9.5 9.5 0 0 1 21.5 15.5' stroke='%2322d38b' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M12 15.5l3.44-4.91' stroke='%23ffc53d' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='15.5' r='2.1' fill='%23ffc53d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,7 +25,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.55;font-feature-settings:"cv11" 1}
-img{max-width:100%;display:block}
+img{max-width:100%;height:auto;display:block}
 a{color:inherit}
 .g{color:var(--green)} .y{color:var(--yellow)} .r{color:var(--red)} .m{color:var(--muted)}
 .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
@@ -63,7 +63,8 @@ h1 em{font-style:normal;color:var(--yellow);text-shadow:0 0 40px rgba(255,197,61
 .cta .fine{font-size:12.5px;color:var(--dim);text-wrap:balance}
 
 /* hero shot */
-.shot{position:relative;margin:56px auto 0;max-width:1120px}
+.shot{position:relative;margin:56px 0 0;width:min(1320px,calc(100vw - 48px));left:50%;transform:translateX(-50%)}
+.shot a{display:block}
 .shot .frame{border-radius:16px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03),0 0 120px rgba(34,211,139,.08)}
 .shot .cap{display:flex;justify-content:center;gap:10px;margin-top:14px;font-size:12.5px;color:var(--dim);flex-wrap:wrap}
 .tagd{font-size:11.5px;font-weight:700;letter-spacing:.08em;color:#c9ced8;background:rgba(255,255,255,.05);border:1px solid var(--line2);border-radius:6px;padding:3px 9px}
@@ -78,17 +79,22 @@ h2{font-size:clamp(30px,4.2vw,46px);font-weight:900;letter-spacing:-.035em;line-
 .sh p{color:var(--muted);font-size:17px;margin-top:14px}
 .center{text-align:center;margin-left:auto;margin-right:auto}
 
-.feat{display:grid;grid-template-columns:1fr 1.15fr;gap:56px;align-items:center;margin-top:64px}
-.feat.rev{grid-template-columns:1.15fr 1fr}
+.feat{display:grid;grid-template-columns:1fr 1.4fr;gap:48px;align-items:center;margin-top:64px}
+.feat.rev{grid-template-columns:1.4fr 1fr}
 .feat.rev .txt{order:2}
-.feat .num{font-size:12.5px;font-weight:800;letter-spacing:.12em;color:var(--dim)}
-.feat h3{font-size:clamp(24px,2.8vw,32px);font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-top:8px}
-.feat p{color:var(--muted);font-size:16.5px;margin-top:12px}
+.feat .num,.wide .num{font-size:12.5px;font-weight:800;letter-spacing:.12em;color:var(--dim)}
+.feat h3,.wide h3{font-size:clamp(24px,2.8vw,32px);font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-top:8px}
+.feat p,.wide p{color:var(--muted);font-size:16.5px;margin-top:12px}
 .feat ul{list-style:none;margin-top:16px;display:grid;gap:9px}
 .feat li{display:flex;gap:10px;font-size:15px;color:#cfd4de}
 .feat li:before{content:"";flex:none;width:18px;height:18px;margin-top:3px;border-radius:5px;background:rgba(34,211,139,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' stroke='%2322d38b' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/14px no-repeat;border:1px solid rgba(34,211,139,.3)}
-.feat .img.narrow{max-width:400px;width:100%;justify-self:center}
-.feat .img{border-radius:14px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04)}
+.feat figure{min-width:0}
+.figcap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--dim)}
+.wide{margin-top:64px}
+.wide .txt{max-width:720px}
+.wide figure{margin-top:24px}
+.swipe{display:none}
+.feat .img,.wide .img{border-radius:14px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04)}
 .feat .img.y{box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 80px rgba(255,197,61,.08)}
 .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:56px}
 .chips span{font-size:14px;color:#cfd4de;border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:8px 14px}
@@ -152,7 +158,10 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   .price{padding:26px}
   .price .big{font-size:68px}
   nav .brand b{font-size:16px}
-  .shot{margin-top:40px}
+  .shot{margin-top:40px;width:calc(100vw - 36px)}
+  .wide .img{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .wide .img img{width:760px;max-width:none}
+  .swipe{display:inline}
 }
 </style>
 </head>
@@ -183,12 +192,11 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
     <div class="shot">
       <div class="frame">
-        <picture>
-          <source media="(max-width:640px)" srcset="img/dashboard-mobile.png">
-          <img src="img/dashboard.png" width="1600" height="1000" alt="FundedMeter dashboard mockup: Room left today meter showing $412 of $1,000 daily loss limit left, prop firm rules panel, position sizer, stats, equity curve with drawdown floor, discipline panel and P&L calendar">
-        </picture>
+        <a href="img/sheet-dashboard.webp" target="_blank" rel="noopener" aria-label="Open the full-size dashboard screenshot">
+          <img src="img/sheet-dashboard.webp" width="2640" height="1344" alt="Real screenshot of the FundedMeter dashboard filled with fictional demo data: Room left today $393 of a $1,000 daily loss limit in the yellow caution state, prop firm rules progress bars, position sizer showing 5 MNQ contracts, win rate, profit factor and expectancy cards, equity curve with drawdown floor, discipline panel at 78% rules followed, and a September P&amp;L calendar">
+        </a>
       </div>
-      <div class="cap"><span class="tagd">⚑ <span>DEMO DATA</span> · fictional numbers</span><span>Design mockup — the spreadsheet itself may look slightly different.</span></div>
+      <div class="cap"><span class="tagd">⚑ <span>DEMO DATA</span> · fictional numbers</span><span>Real screenshots of FundedMeter in the spreadsheet, filled with fictional demo data.</span></div>
     </div>
   </div>
 </header>
@@ -212,7 +220,7 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <li>Updates the moment you log a trade</li>
         </ul>
       </div>
-      <div class="img y"><img src="img/hero-yellow.png" alt="Room left today meter at $412 of $1,000, yellow caution state" loading="lazy"></div>
+      <figure><div class="img y"><img src="img/sheet-meter.webp" width="1202" height="492" alt="Real screenshot of the Room left today panel with fictional demo data: $393 of a $1,000 daily loss limit, 39% left, Caution: size down, today's P&amp;L -$607.50, trailing drawdown floor $50,000, 1 full stop left at $200 risk" loading="lazy"></div><figcaption class="figcap"><span class="tagd">⚑ <span>DEMO DATA</span> · fictional numbers</span><span>Room left today panel, real screenshot</span></figcaption></figure>
     </div>
 
     <div class="feat rev">
@@ -221,12 +229,12 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         <h3>Prop rules panel, with <em style="font-style:normal" class="y">your</em> firm's numbers</h3>
         <p>Type in the rules from your evaluation or funded account. No firm's rules are hard-coded, because firms change them.</p>
         <ul>
-          <li>Daily loss limit with reset time</li>
-          <li>Max drawdown: static, trailing intraday or trailing end-of-day</li>
-          <li>Profit target progress and minimum trading days</li>
+          <li>Daily loss limit, with a note for your reset time</li>
+          <li>Max drawdown: static, trailing on end-of-day highs, or trailing on closed trades</li>
+          <li>Profit target progress</li>
         </ul>
       </div>
-      <div class="img"><img src="img/rules.png" alt="Prop firm rules panel: daily loss limit, max trailing drawdown, profit target progress bars" loading="lazy"></div>
+      <figure><div class="img"><img src="img/sheet-rules.webp" width="1036" height="492" alt="Real screenshot of the prop firm rules panel with fictional demo data: daily loss limit $608 of $1,000 used with $393 left, max trailing drawdown $1,056 of $2,500 with $1,444 buffer, profit target $1,444 of $3,000" loading="lazy"></div><figcaption class="figcap"><span class="tagd">⚑ <span>DEMO DATA</span> · fictional numbers</span><span>Prop firm rules panel, real screenshot</span></figcaption></figure>
     </div>
 
     <div class="feat">
@@ -240,7 +248,7 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <li>Shows the math, so you can check it</li>
         </ul>
       </div>
-      <div class="img narrow"><img src="img/sizer.png" alt="Position sizer: MNQ, 20 point stop, $200 risk gives max 5 contracts" loading="lazy"></div>
+      <figure><div class="img"><img src="img/sheet-sizer.webp" width="2100" height="1268" alt="Real screenshot of the Position Sizer tab with fictional demo data: MNQ, 20 point stop, $200 risk, $40 risk per contract, max 5 contracts limited by risk, with the step-by-step math shown" loading="lazy"></div><figcaption class="figcap"><span class="tagd">⚑ <span>DEMO DATA</span> · fictional numbers</span><span>Sizer tab, real screenshot</span></figcaption></figure>
     </div>
 
     <div class="feat rev">
@@ -254,11 +262,20 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <li>A rules-followed % you can work on</li>
         </ul>
       </div>
-      <div class="img narrow"><img src="img/disc.png" alt="Discipline panel: 78% rules followed, cost of rule breaks -$1,240 itemized" loading="lazy"></div>
+      <figure><div class="img"><img src="img/sheet-discipline.webp" width="2185" height="1565" alt="Real screenshot of the Discipline tab with fictional demo data: 41 trades logged, 78% rules followed, rule-break trades net -$2,399.60, cost itemized by tag such as moved stop and oversized" loading="lazy"></div><figcaption class="figcap"><span class="tagd">⚑ <span>DEMO DATA</span> · fictional numbers</span><span>Discipline tab, real screenshot</span></figcaption></figure>
+    </div>
+
+    <div class="wide">
+      <div class="txt">
+        <div class="num">05</div>
+        <h3>The trade log</h3>
+        <p>One row per closed trade. You type the date, time, instrument, side, contracts, entry, exit, stop and optional fees. P&amp;L, risk and R-multiple calculate automatically.</p>
+      </div>
+      <figure><div class="img"><img src="img/sheet-tradelog.webp" width="2660" height="866" alt="Real screenshot of the Trade Log tab with fictional demo trades in NQ, MNQ, ES and MES: date, time, side, contracts, entry, exit, stop, fees, points, gross and net P&amp;L, risk, R-multiple, setup, followed rules and rule-break tag columns" loading="lazy"></div><figcaption class="figcap"><span class="tagd">⚑ <span>DEMO DATA</span> · fictional numbers</span><span>Trade Log tab, real screenshot</span><span class="swipe">Swipe to see more columns →</span></figcaption></figure>
     </div>
 
     <div class="chips">
-      <span>📈 Equity curve with drawdown floor</span><span>🗓️ P&amp;L calendar</span><span>📊 Win rate, profit factor, expectancy (R)</span><span>✅ Pre-trade checklist</span><span>📝 Trade log with R-multiples</span>
+      <span>📈 Equity curve with drawdown floor</span><span>🗓️ P&amp;L calendar</span><span>📊 Win rate, profit factor, expectancy (R)</span><span>🧩 Setup playbook stats</span><span>📝 Trade log with R-multiples</span>
     </div>
   </div>
 </section>
@@ -302,7 +319,7 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <li>Google Sheets template (Excel-compatible)</li>
           <li>Room-left meter, prop rules panel, position sizer</li>
           <li>Trade log, stats, equity curve with drawdown floor, P&amp;L calendar</li>
-          <li>Discipline tracking + pre-trade checklist</li>
+          <li>Discipline tracking + setup playbook</li>
           <li>Google Sheets make-a-copy link (in the delivery PDF)</li>
           <li>The .xlsx file for Excel</li>
           <li>A demo copy filled with fictional data</li>
@@ -320,10 +337,10 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <div class="faq">
       <details open><summary>Is it an app?</summary><p>No. It's a Google Sheets template (Excel-compatible). You make a copy, enter your rules once, then log trades. Nothing to install, no account to create, no subscription.</p></details>
       <details><summary>Does it work with my prop firm?</summary><p>It works with any prop firm's rules that you enter yourself: daily loss limit, static or trailing drawdown, profit target and minimum days. We don't hard-code any firm's rules (they change), and we're not affiliated with any prop firm.</p></details>
-      <details><summary>Does it connect to my broker or platform?</summary><p>Not in v1. You log trades in the sheet with drop-downs (instrument, direction, contracts, entry, stop, exit), and everything else calculates automatically.</p></details>
-      <details><summary>Only NQ / MNQ?</summary><p>It's built NQ-first, with NQ, MNQ, ES and MES point values preloaded. You can add other instruments in Settings.</p></details>
+      <details><summary>Does it connect to my broker or platform?</summary><p>Not in v1. You type each closed trade into the log (date, time, instrument, side, contracts, entry, exit, stop, optional fees), and everything else calculates automatically.</p></details>
+      <details><summary>Only NQ / MNQ?</summary><p>It's built NQ-first, with NQ, MNQ, ES and MES point values preloaded. Point values are editable in Settings.</p></details>
       <details><summary>Is this financial advice?</summary><p>No. FundedMeter is an educational, record-keeping and calculation tool. It doesn't give signals, trade ideas or recommendations, and it can't guarantee you'll pass an evaluation or keep an account. Always check your firm's official rules.</p></details>
-      <details><summary>Are the numbers in the screenshots real?</summary><p>No. All dashboard numbers shown are fictional demo data, and the images are design mockups. The spreadsheet itself may look slightly different.</p></details>
+      <details><summary>Are the numbers in the screenshots real?</summary><p>No. The images are real screenshots of FundedMeter in the spreadsheet, filled with fictional demo data. Fonts and chart styling can look slightly different between Google Sheets and Excel.</p></details>
       <details><summary>What do I get, and how is it delivered?</summary><p>$19, one-time. After checkout on Gumroad you get an instant download: a PDF with your Google Sheets make-a-copy link, the .xlsx file for Excel, a demo copy filled with fictional data, and a PDF setup guide.</p></details>
     </div>
   </div>
@@ -343,7 +360,7 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
 <footer>
   <div class="wrap">
-    <p class="disc"><b style="color:#8b93a3">Disclaimer:</b> FundedMeter is an educational, record-keeping and calculation tool, not financial advice. It does not provide trade signals or recommendations and does not guarantee any trading result, evaluation pass or account outcome. All numbers shown in screenshots and videos are fictional demo data; images are design mockups. Futures trading involves substantial risk of loss and is not suitable for everyone. Not affiliated with, or endorsed by, any prop firm, broker or exchange. Always check your firm's official rules.</p>
+    <p class="disc"><b style="color:#8b93a3">Disclaimer:</b> FundedMeter is an educational, record-keeping and calculation tool, not financial advice. It does not provide trade signals or recommendations and does not guarantee any trading result, evaluation pass or account outcome. All numbers shown in screenshots and videos are fictional demo data. Futures trading involves substantial risk of loss and is not suitable for everyone. Not affiliated with, or endorsed by, any prop firm, broker or exchange. Always check your firm's official rules.</p>
     <div class="row"><span>© 2026 FundedMeter · @fundedmeter</span><span>Contact: <a href="mailto:fundedmeter@gmail.com">fundedmeter@gmail.com</a> · <a href="#top">Back to top ↑</a></span></div>
   </div>
 </footer>
