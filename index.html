@@ -3,47 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FundedMeter — Know your room left today (waitlist)</title>
-<meta name="description" content="A Google Sheets (Excel-compatible) trading journal and risk dashboard for NQ/MNQ prop-firm traders. Live “Room left today” meter, prop rules panel, futures position sizer, discipline tracking. Join the waitlist.">
-<meta property="og:title" content="FundedMeter — The journal that stops you from blowing your prop account">
-<meta property="og:description" content="Google Sheets (Excel-compatible) journal & risk dashboard for NQ/MNQ prop traders. Join the waitlist for the early-bird price.">
-<!-- og:image should be an absolute URL once hosted, e.g. https://YOUR-SITE/img/dashboard.png -->
-<meta property="og:image" content="img/dashboard.png">
+<title>FundedMeter — NQ/MNQ prop-firm trading journal &amp; risk dashboard ($19)</title>
+<meta name="description" content="A Google Sheets (Excel-compatible) trading journal and risk dashboard for NQ/MNQ prop-firm traders. Live “Room left today” meter, prop rules panel, futures position sizer, discipline tracking. One-time $19 digital download.">
+<meta property="og:title" content="FundedMeter — Know your room left today">
+<meta property="og:description" content="Google Sheets (Excel-compatible) journal & risk dashboard for NQ/MNQ prop traders. One-time $19 digital download.">
+<meta property="og:image" content="https://fundedmeter-prog.github.io/fundedmeter/img/dashboard.png">
 <meta name="theme-color" content="#0c0e12">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230c0e12'/%3E%3Cpath d='M2.5 15.5a9.5 9.5 0 0 1 1.27-4.75' stroke='%23ff4d5e' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M4.72 9.39A9.5 9.5 0 0 1 21.5 15.5' stroke='%2322d38b' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M12 15.5l3.44-4.91' stroke='%23ffc53d' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='15.5' r='2.1' fill='%23ffc53d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-<script>
-/* =====================================================================
-   FORM CONFIG  —  the only thing you need to edit to collect emails.
-   ---------------------------------------------------------------------
-   FORM_ENDPOINT: where the waitlist form POSTs. Leave "" for now and the
-   form just shows a friendly "thanks" message (nothing is saved anywhere).
-
-   Free options:
-   • Formspree:  create a form at formspree.io → copy its endpoint,
-                 e.g. "https://formspree.io/f/abcdwxyz"   (works as-is)
-   • Getform / Basin / FormSubmit: same idea — paste the POST URL.
-   • Google Forms: make a form with "Email" (+ optional "What do you trade"
-                 and "Source") short-answer questions, then use
-                 "https://docs.google.com/forms/d/e/FORM_ID/formResponse"
-                 and fill in GOOGLE_FORM_FIELDS below with each question's
-                 entry.NNNN id (from the form's "Get pre-filled link").
-   • Tally:      Tally has no simple POST URL. Easiest is to set
-                 TALLY_URL below to your Tally form link; the button then
-                 opens Tally (with the email pre-filled if your Tally form
-                 has a hidden field named "email").
-   ===================================================================== */
-const FORM_ENDPOINT = "";            // <-- paste Formspree / Google Forms URL here
-const GOOGLE_FORM_FIELDS = {         // only used when FORM_ENDPOINT is a Google Form
-  email:  "entry.0000000001",
-  trade:  "entry.0000000002",
-  source: "entry.0000000003"
-};
-const TALLY_URL = "";                // optional, e.g. "https://tally.so/r/abc123"
-</script>
 
 <style>
 :root{
@@ -86,22 +56,11 @@ h1 em{font-style:normal;color:var(--yellow);text-shadow:0 0 40px rgba(255,197,61
 .lede{font-size:17px;color:var(--muted);max-width:640px;margin:14px auto 0}
 .offerline{font-size:14px;color:var(--muted);margin-top:14px}
 .offerline b{color:var(--green)}
-.offerline s{color:var(--dim)}
 
-/* form */
-.wl{max-width:520px;margin:28px auto 0}
-.wl .row{display:flex;gap:10px}
-.wl input[type=email],.wl select{flex:1;min-width:0;height:48px;border-radius:10px;border:1px solid var(--line2);background:#0f1217;color:var(--text);font:inherit;font-size:15px;padding:0 14px;outline:none;transition:border-color .15s,box-shadow .15s}
-.wl input[type=email]:focus,.wl select:focus{border-color:rgba(34,211,139,.6);box-shadow:0 0 0 4px rgba(34,211,139,.1)}
-.wl select{margin-top:10px;width:100%;color:#aab2c0;appearance:none;background-image:linear-gradient(45deg,transparent 50%,#8b93a3 50%),linear-gradient(135deg,#8b93a3 50%,transparent 50%);background-position:calc(100% - 20px) 21px,calc(100% - 15px) 21px;background-size:5px 5px;background-repeat:no-repeat}
-.wl .btn{height:48px}
-.wl .fine{font-size:12.5px;color:var(--dim);margin-top:10px;text-wrap:balance}
-.wl .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
-.wl .err{color:var(--red);font-size:13.5px;margin-top:8px;display:none}
-.thanks{display:none;max-width:520px;margin:28px auto 0;border-radius:14px;padding:22px 24px;background:linear-gradient(135deg,rgba(34,211,139,.14),rgba(34,211,139,.04));border:1px solid rgba(34,211,139,.4);text-align:left}
-.thanks b{font-size:18px;display:flex;align-items:center;gap:10px}
-.thanks p{color:#b9c0cc;font-size:14.5px;margin-top:6px}
-.done .wl{display:none} .done .thanks{display:block}
+/* cta */
+.cta{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.cta .btn{height:52px;padding:0 28px;font-size:16px}
+.cta .fine{font-size:12.5px;color:var(--dim);text-wrap:balance}
 
 /* hero shot */
 .shot{position:relative;margin:56px auto 0;max-width:1120px}
@@ -152,7 +111,6 @@ h2{font-size:clamp(30px,4.2vw,46px);font-weight:900;letter-spacing:-.035em;line-
 .ladder{margin-top:22px;display:grid;gap:8px}
 .ladder div{display:flex;justify-content:space-between;font-size:15px;padding:10px 14px;border-radius:9px;background:rgba(0,0,0,.2);border:1px solid var(--line)}
 .ladder div.on{border-color:rgba(34,211,139,.45);color:#d9fff0}
-.ladder s{color:var(--dim)}
 .price .note{font-size:13.5px;color:var(--muted);margin-top:16px}
 .incl h4{font-size:18px;font-weight:800}
 .incl ul{list-style:none;margin-top:14px;display:grid;gap:11px}
@@ -189,9 +147,7 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 @media (max-width:640px){
   .wrap{padding:0 18px}
   .hero{padding:48px 0 24px}
-  .wl .row{flex-direction:column}
-  .wl .btn{width:100%}
-  .wl input[type=email]{flex:none;width:100%}
+  .cta .btn{width:100%}
   section.s{padding:64px 0}
   .price{padding:26px}
   .price .big{font-size:68px}
@@ -208,7 +164,7 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M2.5 15.5a9.5 9.5 0 0 1 1.27-4.75" stroke="#ff4d5e" stroke-width="2.4" stroke-linecap="round"/><path d="M4.72 9.39A9.5 9.5 0 0 1 21.5 15.5" stroke="#22d38b" stroke-width="2.4" stroke-linecap="round"/><path d="M12 15.5l3.44-4.91" stroke="#ffc53d" stroke-width="2.3" stroke-linecap="round"/><circle cx="12" cy="15.5" r="2" fill="#ffc53d"/></svg></span>
       <b>Funded<span>Meter</span></b>
     </a>
-    <a class="btn sm" href="#join">Join waitlist</a>
+    <a class="btn sm" href="https://fundedmeter.gumroad.com/l/fundedmeter" target="_blank" rel="noopener">Get FundedMeter, $19</a>
   </div>
 </nav>
 
@@ -216,22 +172,14 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <div class="wrap">
     <div class="kicker"><i></i>For NQ / MNQ prop-firm traders</div>
     <h1>Know your <em>room left</em> today.</h1>
-    <p class="tagline">The journal that stops you from blowing your prop account.</p>
+    <p class="tagline">The journal that shows you the line before you cross it.</p>
     <p class="lede">A Google Sheets (Excel-compatible) trading journal with a live “Room left today” meter, your prop rules, a futures position sizer and discipline tracking. One-time purchase. No subscription. No app to install.</p>
 
-    <div class="formbox">
-      <form class="wl" novalidate>
-        <div class="row">
-          <input type="email" name="email" placeholder="you@email.com" autocomplete="email" required aria-label="Email address">
-          <button class="btn" type="submit">Join the waitlist</button>
-        </div>
-        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="err" role="alert">Please enter a valid email.</div>
-        <p class="fine">We only use your email to tell you when FundedMeter launches. No spam, unsubscribe anytime.</p>
-      </form>
-      <div class="thanks" role="status"><b><span class="g">✓</span> You're on the waitlist.</b><p>We'll email you when FundedMeter launches, with your waitlist early-bird price ($12 instead of $19). Nothing to pay now.</p></div>
+    <div class="cta">
+      <a class="btn" href="https://fundedmeter.gumroad.com/l/fundedmeter" target="_blank" rel="noopener">Get FundedMeter, $19</a>
+      <p class="fine">$19 one-time · instant digital download · no subscription</p>
     </div>
-    <p class="offerline">Waitlist early-bird: <b>$12</b> · <span style="white-space:nowrap">launch price $19</span> · <span style="white-space:nowrap">regular <s>$29</s></span></p>
+    <p class="offerline">You get: a Google Sheets make-a-copy link (in the delivery PDF), the .xlsx for Excel, a demo copy with fictional data, and a PDF guide.</p>
 
     <div class="shot">
       <div class="frame">
@@ -240,7 +188,7 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <img src="img/dashboard.png" width="1600" height="1000" alt="FundedMeter dashboard mockup: Room left today meter showing $412 of $1,000 daily loss limit left, prop firm rules panel, position sizer, stats, equity curve with drawdown floor, discipline panel and P&L calendar">
         </picture>
       </div>
-      <div class="cap"><span class="tagd">⚑ <span>DEMO DATA</span> · fictional numbers</span><span>Design mockup — final template may differ.</span></div>
+      <div class="cap"><span class="tagd">⚑ <span>DEMO DATA</span> · fictional numbers</span><span>Design mockup — the spreadsheet itself may look slightly different.</span></div>
     </div>
   </div>
 </header>
@@ -333,32 +281,34 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 <section class="s" id="offer">
   <div class="wrap">
     <div class="sh">
-      <div class="eyebrow">Early-bird offer</div>
-      <h2>Join the waitlist, lock in the lowest price.</h2>
-      <p>We're building FundedMeter now. Waitlist members get first access and the early-bird price at launch. Nothing to pay today.</p>
+      <div class="eyebrow">Price</div>
+      <h2>One price. Yours to keep.</h2>
+      <p>Pay once, download instantly, and use it in Google Sheets or Excel. No subscription, no account to create.</p>
     </div>
     <div class="offer">
       <div class="price">
-        <div class="lbl">Waitlist early-bird</div>
-        <div class="big">$12<small>one-time</small></div>
+        <div class="lbl">FundedMeter</div>
+        <div class="big">$19<small>one-time</small></div>
         <div class="ladder">
-          <div class="on"><span>Waitlist members</span><b class="g">$12</b></div>
-          <div><span>Launch price</span><span>$19</span></div>
-          <div><span>Regular price</span><s>$29</s></div>
+          <div class="on"><span>Payment</span><b class="g">One-time, no subscription</b></div>
+          <div><span>Delivery</span><span>Instant digital download</span></div>
+          <div><span>Works in</span><span>Google Sheets &amp; Excel</span></div>
         </div>
-        <p class="note">Early-bird price available to waitlist members for a limited window at launch.</p>
+        <p class="note">Sold and delivered through Gumroad.</p>
       </div>
       <div class="card incl">
-        <h4>What you'll get</h4>
+        <h4>What you get</h4>
         <ul>
           <li>Google Sheets template (Excel-compatible)</li>
           <li>Room-left meter, prop rules panel, position sizer</li>
           <li>Trade log, stats, equity curve with drawdown floor, P&amp;L calendar</li>
           <li>Discipline tracking + pre-trade checklist</li>
-          <li>Quick setup guide</li>
-          <li>Free v1 updates</li>
+          <li>Google Sheets make-a-copy link (in the delivery PDF)</li>
+          <li>The .xlsx file for Excel</li>
+          <li>A demo copy filled with fictional data</li>
+          <li>PDF setup guide</li>
         </ul>
-        <a class="btn" href="#join" style="margin-top:22px;width:100%">Join the waitlist</a>
+        <a class="btn" href="https://fundedmeter.gumroad.com/l/fundedmeter" target="_blank" rel="noopener" style="margin-top:22px;width:100%">Get FundedMeter, $19</a>
       </div>
     </div>
   </div>
@@ -373,32 +323,20 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <details><summary>Does it connect to my broker or platform?</summary><p>Not in v1. You log trades in the sheet with drop-downs (instrument, direction, contracts, entry, stop, exit), and everything else calculates automatically.</p></details>
       <details><summary>Only NQ / MNQ?</summary><p>It's built NQ-first, with NQ, MNQ, ES and MES point values preloaded. You can add other instruments in Settings.</p></details>
       <details><summary>Is this financial advice?</summary><p>No. FundedMeter is an educational, record-keeping and calculation tool. It doesn't give signals, trade ideas or recommendations, and it can't guarantee you'll pass an evaluation or keep an account. Always check your firm's official rules.</p></details>
-      <details><summary>Are the numbers in the screenshots real?</summary><p>No. All dashboard numbers shown are fictional demo data, and the images are design mockups of the planned template.</p></details>
-      <details><summary>When does it launch, and what does joining cost?</summary><p>Joining is free. Waitlist members get one email when it launches, with the $12 early-bird link. If there isn't enough interest, we'll let you know and won't email you again.</p></details>
+      <details><summary>Are the numbers in the screenshots real?</summary><p>No. All dashboard numbers shown are fictional demo data, and the images are design mockups. The spreadsheet itself may look slightly different.</p></details>
+      <details><summary>What do I get, and how is it delivered?</summary><p>$19, one-time. After checkout on Gumroad you get an instant download: a PDF with your Google Sheets make-a-copy link, the .xlsx file for Excel, a demo copy filled with fictional data, and a PDF setup guide.</p></details>
     </div>
   </div>
 </section>
 
-<section class="s final" id="join">
+<section class="s final" id="get">
   <div class="wrap">
-    <div class="eyebrow">Waitlist</div>
+    <div class="eyebrow">Get FundedMeter</div>
     <h2>Stop guessing how much room you have left.</h2>
-    <p class="m" style="margin-top:12px;font-size:17px">Get the early-bird price ($12) when FundedMeter launches.</p>
-    <div class="formbox">
-      <form class="wl" novalidate>
-        <div class="row">
-          <input type="email" name="email" placeholder="you@email.com" autocomplete="email" required aria-label="Email address">
-          <button class="btn" type="submit">Join the waitlist</button>
-        </div>
-        <select name="trade" aria-label="What do you trade (optional)">
-          <option value="">What do you mainly trade? (optional)</option>
-          <option>NQ / MNQ</option><option>ES / MES</option><option>Other futures</option><option>Stocks / crypto</option><option>Not trading yet</option>
-        </select>
-        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="err" role="alert">Please enter a valid email.</div>
-        <p class="fine">We only use your email to tell you when FundedMeter launches. No spam, unsubscribe anytime.</p>
-      </form>
-      <div class="thanks" role="status"><b><span class="g">✓</span> You're on the waitlist.</b><p>We'll email you when FundedMeter launches, with your waitlist early-bird price ($12 instead of $19). Nothing to pay now.</p></div>
+    <p class="m" style="margin-top:12px;font-size:17px">$19 one-time. Instant digital download for Google Sheets and Excel.</p>
+    <div class="cta">
+      <a class="btn" href="https://fundedmeter.gumroad.com/l/fundedmeter" target="_blank" rel="noopener">Get FundedMeter, $19</a>
+      <p class="fine">Includes the make-a-copy link (via the delivery PDF), the .xlsx, a fictional-data demo copy and a PDF guide.</p>
     </div>
   </div>
 </section>
@@ -410,44 +348,5 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   </div>
 </footer>
 
-<script>
-(function(){
-  // Tag signups with where they came from: ?src=tiktok-1  or ?utm_source=reels
-  const qs = new URLSearchParams(location.search);
-  const SOURCE = qs.get('src') || qs.get('utm_source') || qs.get('ref') || (document.referrer ? new URL(document.referrer).hostname : 'direct');
-  const validEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
-
-  async function send(data){
-    if (!FORM_ENDPOINT) { console.info('[waitlist] FORM_ENDPOINT not set — showing thanks only. Data:', data); return; }
-    if (FORM_ENDPOINT.includes('docs.google.com/forms')) {
-      const fd = new FormData();
-      for (const k in GOOGLE_FORM_FIELDS) if (data[k]) fd.append(GOOGLE_FORM_FIELDS[k], data[k]);
-      await fetch(FORM_ENDPOINT, { method:'POST', mode:'no-cors', body:fd }); // Google returns an opaque response
-      return;
-    }
-    const fd = new FormData();
-    for (const k in data) fd.append(k, data[k]);
-    const res = await fetch(FORM_ENDPOINT, { method:'POST', body:fd, headers:{ 'Accept':'application/json' } });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-  }
-
-  document.querySelectorAll('form.wl').forEach(form => {
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      const box = form.closest('.formbox'), err = form.querySelector('.err'), btn = form.querySelector('button');
-      const email = form.email.value.trim();
-      if (form._gotcha.value) { box.classList.add('done'); return; }       // bot
-      if (!validEmail(email)) { err.textContent = 'Please enter a valid email.'; err.style.display = 'block'; form.email.focus(); return; }
-      err.style.display = 'none';
-      const data = { email, trade: form.trade ? form.trade.value : '', source: SOURCE, page: 'fundedmeter-waitlist-v1' };
-      if (TALLY_URL) { location.href = TALLY_URL + (TALLY_URL.includes('?') ? '&' : '?') + 'email=' + encodeURIComponent(email) + '&source=' + encodeURIComponent(SOURCE); return; }
-      btn.disabled = true; const label = btn.textContent; btn.textContent = 'Joining…';
-      try { await send(data); box.classList.add('done'); document.querySelectorAll('.formbox').forEach(b => b.classList.add('done')); }
-      catch (x) { err.textContent = 'Something went wrong. Please try again in a moment.'; err.style.display = 'block'; }
-      finally { btn.disabled = false; btn.textContent = label; }
-    });
-  });
-})();
-</script>
 </body>
 </html>
