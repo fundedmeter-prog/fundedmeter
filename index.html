@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FundedMeter — Know your room left today (waitlist)</title>
+<meta name="description" content="A Google Sheets (Excel-compatible) trading journal and risk dashboard for NQ/MNQ prop-firm traders. Live “Room left today” meter, prop rules panel, futures position sizer, discipline tracking. Join the waitlist.">
+<meta property="og:title" content="FundedMeter — The journal that stops you from blowing your prop account">
+<meta property="og:description" content="Google Sheets (Excel-compatible) journal & risk dashboard for NQ/MNQ prop traders. Join the waitlist for the early-bird price.">
+<!-- og:image should be an absolute URL once hosted, e.g. https://YOUR-SITE/img/dashboard.png -->
+<meta property="og:image" content="img/dashboard.png">
+<meta name="theme-color" content="#0c0e12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230c0e12'/%3E%3Cpath d='M2.5 15.5a9.5 9.5 0 0 1 1.27-4.75' stroke='%23ff4d5e' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M4.72 9.39A9.5 9.5 0 0 1 21.5 15.5' stroke='%2322d38b' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M12 15.5l3.44-4.91' stroke='%23ffc53d' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='15.5' r='2.1' fill='%23ffc53d'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script>
+/* =====================================================================
+   FORM CONFIG  —  the only thing you need to edit to collect emails.
+   ---------------------------------------------------------------------
+   FORM_ENDPOINT: where the waitlist form POSTs. Leave "" for now and the
+   form just shows a friendly "thanks" message (nothing is saved anywhere).
+
+   Free options:
+   • Formspree:  create a form at formspree.io → copy its endpoint,
+                 e.g. "https://formspree.io/f/abcdwxyz"   (works as-is)
+   • Getform / Basin / FormSubmit: same idea — paste the POST URL.
+   • Google Forms: make a form with "Email" (+ optional "What do you trade"
+                 and "Source") short-answer questions, then use
+                 "https://docs.google.com/forms/d/e/FORM_ID/formResponse"
+                 and fill in GOOGLE_FORM_FIELDS below with each question's
+                 entry.NNNN id (from the form's "Get pre-filled link").
+   • Tally:      Tally has no simple POST URL. Easiest is to set
+                 TALLY_URL below to your Tally form link; the button then
+                 opens Tally (with the email pre-filled if your Tally form
+                 has a hidden field named "email").
+   ===================================================================== */
+const FORM_ENDPOINT = "";            // <-- paste Formspree / Google Forms URL here
+const GOOGLE_FORM_FIELDS = {         // only used when FORM_ENDPOINT is a Google Form
+  email:  "entry.0000000001",
+  trade:  "entry.0000000002",
+  source: "entry.0000000003"
+};
+const TALLY_URL = "";                // optional, e.g. "https://tally.so/r/abc123"
+</script>
+
+<style>
+:root{
+  --bg:#0c0e12; --bg2:#101319; --card:#13161d; --card2:#171b23; --line:#242934; --line2:#2d3340;
+  --text:#e8eaf0; --muted:#8b93a3; --dim:#5d6575;
+  --green:#22d38b; --yellow:#ffc53d; --red:#ff4d5e; --blue:#5b9cff;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.55;font-feature-settings:"cv11" 1}
+img{max-width:100%;display:block}
+a{color:inherit}
+.g{color:var(--green)} .y{color:var(--yellow)} .r{color:var(--red)} .m{color:var(--muted)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.gridbg{background:
+  linear-gradient(#13161c 1px,transparent 1px) 0 0/100% 40px,
+  linear-gradient(90deg,#13161c 1px,transparent 1px) 0 0/80px 100%}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(12,14,18,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+.logo{width:36px;height:36px;border-radius:9px;background:linear-gradient(145deg,#1f2a24,#0f1a14);border:1px solid #2a3b31;display:grid;place-items:center;box-shadow:0 0 24px rgba(34,211,139,.18);flex:none}
+.brand b{font-size:18px;font-weight:800;letter-spacing:-.02em}
+.brand b span{color:var(--green)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:10px;background:var(--green);color:#04130c;font-weight:800;font-size:15px;text-decoration:none;border:0;cursor:pointer;font-family:inherit;transition:transform .15s,box-shadow .15s;box-shadow:0 0 30px rgba(34,211,139,.25);white-space:nowrap}
+.btn:hover{transform:translateY(-1px);box-shadow:0 0 40px rgba(34,211,139,.4)}
+.btn.sm{height:38px;font-size:14px;padding:0 16px}
+
+/* hero */
+.hero{position:relative;padding:72px 0 40px;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:0;background:radial-gradient(800px 420px at 50% 0%,rgba(34,211,139,.12),transparent 70%),radial-gradient(600px 400px at 85% 70%,rgba(255,197,61,.06),transparent 70%);pointer-events:none}
+.hero .wrap{position:relative;text-align:center}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#aeb5c3;border:1px solid var(--line2);background:#121519;border-radius:999px;padding:7px 14px}
+.kicker i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+h1{font-size:clamp(42px,7vw,84px);font-weight:900;letter-spacing:-.045em;line-height:1;margin-top:22px}
+h1 em{font-style:normal;color:var(--yellow);text-shadow:0 0 40px rgba(255,197,61,.3)}
+.tagline{font-size:clamp(18px,2.3vw,24px);font-weight:700;color:#dfe3ea;margin-top:20px;letter-spacing:-.01em}
+.lede{font-size:17px;color:var(--muted);max-width:640px;margin:14px auto 0}
+.offerline{font-size:14px;color:var(--muted);margin-top:14px}
+.offerline b{color:var(--green)}
+.offerline s{color:var(--dim)}
+
+/* form */
+.wl{max-width:520px;margin:28px auto 0}
+.wl .row{display:flex;gap:10px}
+.wl input[type=email],.wl select{flex:1;min-width:0;height:48px;border-radius:10px;border:1px solid var(--line2);background:#0f1217;color:var(--text);font:inherit;font-size:15px;padding:0 14px;outline:none;transition:border-color .15s,box-shadow .15s}
+.wl input[type=email]:focus,.wl select:focus{border-color:rgba(34,211,139,.6);box-shadow:0 0 0 4px rgba(34,211,139,.1)}
+.wl select{margin-top:10px;width:100%;color:#aab2c0;appearance:none;background-image:linear-gradient(45deg,transparent 50%,#8b93a3 50%),linear-gradient(135deg,#8b93a3 50%,transparent 50%);background-position:calc(100% - 20px) 21px,calc(100% - 15px) 21px;background-size:5px 5px;background-repeat:no-repeat}
+.wl .btn{height:48px}
+.wl .fine{font-size:12.5px;color:var(--dim);margin-top:10px;text-wrap:balance}
+.wl .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.wl .err{color:var(--red);font-size:13.5px;margin-top:8px;display:none}
+.thanks{display:none;max-width:520px;margin:28px auto 0;border-radius:14px;padding:22px 24px;background:linear-gradient(135deg,rgba(34,211,139,.14),rgba(34,211,139,.04));border:1px solid rgba(34,211,139,.4);text-align:left}
+.thanks b{font-size:18px;display:flex;align-items:center;gap:10px}
+.thanks p{color:#b9c0cc;font-size:14.5px;margin-top:6px}
+.done .wl{display:none} .done .thanks{display:block}
+
+/* hero shot */
+.shot{position:relative;margin:56px auto 0;max-width:1120px}
+.shot .frame{border-radius:16px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03),0 0 120px rgba(34,211,139,.08)}
+.shot .cap{display:flex;justify-content:center;gap:10px;margin-top:14px;font-size:12.5px;color:var(--dim);flex-wrap:wrap}
+.tagd{font-size:11.5px;font-weight:700;letter-spacing:.08em;color:#c9ced8;background:rgba(255,255,255,.05);border:1px solid var(--line2);border-radius:6px;padding:3px 9px}
+.tagd span{color:var(--yellow)}
+
+/* sections */
+section.s{padding:84px 0;border-top:1px solid #15181e}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green)}
+h2{font-size:clamp(30px,4.2vw,46px);font-weight:900;letter-spacing:-.035em;line-height:1.07;margin-top:10px}
+.sh{max-width:720px}
+.sh.center{max-width:900px}
+.sh p{color:var(--muted);font-size:17px;margin-top:14px}
+.center{text-align:center;margin-left:auto;margin-right:auto}
+
+.feat{display:grid;grid-template-columns:1fr 1.15fr;gap:56px;align-items:center;margin-top:64px}
+.feat.rev{grid-template-columns:1.15fr 1fr}
+.feat.rev .txt{order:2}
+.feat .num{font-size:12.5px;font-weight:800;letter-spacing:.12em;color:var(--dim)}
+.feat h3{font-size:clamp(24px,2.8vw,32px);font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-top:8px}
+.feat p{color:var(--muted);font-size:16.5px;margin-top:12px}
+.feat ul{list-style:none;margin-top:16px;display:grid;gap:9px}
+.feat li{display:flex;gap:10px;font-size:15px;color:#cfd4de}
+.feat li:before{content:"";flex:none;width:18px;height:18px;margin-top:3px;border-radius:5px;background:rgba(34,211,139,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' stroke='%2322d38b' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/14px no-repeat;border:1px solid rgba(34,211,139,.3)}
+.feat .img.narrow{max-width:400px;width:100%;justify-self:center}
+.feat .img{border-radius:14px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04)}
+.feat .img.y{box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 80px rgba(255,197,61,.08)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:56px}
+.chips span{font-size:14px;color:#cfd4de;border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:8px 14px}
+
+/* who */
+.who{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.card{background:linear-gradient(180deg,rgba(23,27,35,.97),rgba(18,21,28,.97));border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.card .ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:19px;background:#0f1217;border:1px solid var(--line2)}
+.card h4{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-top:14px}
+.card p{color:var(--muted);font-size:15px;margin-top:6px}
+.notfor{margin-top:18px;border-radius:14px;padding:18px 22px;border:1px dashed rgba(255,77,94,.35);background:rgba(255,77,94,.04);color:#c5cad4;font-size:15px}
+.notfor b{color:var(--red)}
+
+/* offer */
+.offer{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:stretch;margin-top:44px}
+.price{border-radius:18px;padding:34px;background:linear-gradient(135deg,rgba(34,211,139,.15),rgba(34,211,139,.03));border:1px solid rgba(34,211,139,.4);box-shadow:0 0 80px rgba(34,211,139,.08)}
+.price .lbl{font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#9fe9c8}
+.price .big{font-size:84px;font-weight:900;letter-spacing:-.05em;line-height:1;color:var(--green);margin-top:10px;text-shadow:0 0 40px rgba(34,211,139,.3)}
+.price .big small{font-size:18px;font-weight:600;color:#9fe9c8;letter-spacing:0;margin-left:6px}
+.ladder{margin-top:22px;display:grid;gap:8px}
+.ladder div{display:flex;justify-content:space-between;font-size:15px;padding:10px 14px;border-radius:9px;background:rgba(0,0,0,.2);border:1px solid var(--line)}
+.ladder div.on{border-color:rgba(34,211,139,.45);color:#d9fff0}
+.ladder s{color:var(--dim)}
+.price .note{font-size:13.5px;color:var(--muted);margin-top:16px}
+.incl h4{font-size:18px;font-weight:800}
+.incl ul{list-style:none;margin-top:14px;display:grid;gap:11px}
+.incl li{display:flex;gap:10px;font-size:15px;color:#cfd4de}
+.incl li:before{content:"✓";color:var(--green);font-weight:900;flex:none}
+
+/* faq */
+.faq{max-width:820px;margin:40px auto 0;display:grid;gap:12px}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 20px}
+details[open]{border-color:var(--line2)}
+summary{list-style:none;cursor:pointer;padding:18px 0;font-weight:700;font-size:16.5px;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--green);font-size:22px;font-weight:600;line-height:1}
+details[open] summary:after{content:"–"}
+details p{color:var(--muted);font-size:15.5px;padding:0 0 18px}
+
+/* final cta */
+.final{text-align:center;position:relative;overflow:hidden}
+.final:before{content:"";position:absolute;inset:0;background:radial-gradient(700px 360px at 50% 100%,rgba(34,211,139,.12),transparent 70%);pointer-events:none}
+.final .wrap{position:relative}
+
+footer{border-top:1px solid var(--line);padding:36px 0 48px;color:var(--dim);font-size:13px}
+footer .wrap{display:grid;gap:14px}
+footer .disc{max-width:900px;line-height:1.6}
+footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* responsive */
+@media (max-width:900px){
+  .feat,.feat.rev{grid-template-columns:1fr;gap:26px;margin-top:56px}
+  .feat.rev .txt{order:0}
+  .who{grid-template-columns:1fr}
+  .offer{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .wrap{padding:0 18px}
+  .hero{padding:48px 0 24px}
+  .wl .row{flex-direction:column}
+  .wl .btn{width:100%}
+  .wl input[type=email]{flex:none;width:100%}
+  section.s{padding:64px 0}
+  .price{padding:26px}
+  .price .big{font-size:68px}
+  nav .brand b{font-size:16px}
+  .shot{margin-top:40px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M2.5 15.5a9.5 9.5 0 0 1 1.27-4.75" stroke="#ff4d5e" stroke-width="2.4" stroke-linecap="round"/><path d="M4.72 9.39A9.5 9.5 0 0 1 21.5 15.5" stroke="#22d38b" stroke-width="2.4" stroke-linecap="round"/><path d="M12 15.5l3.44-4.91" stroke="#ffc53d" stroke-width="2.3" stroke-linecap="round"/><circle cx="12" cy="15.5" r="2" fill="#ffc53d"/></svg></span>
+      <b>Funded<span>Meter</span></b>
+    </a>
+    <a class="btn sm" href="#join">Join waitlist</a>
+  </div>
+</nav>
+
+<header class="hero gridbg" id="top">
+  <div class="wrap">
+    <div class="kicker"><i></i>For NQ / MNQ prop-firm traders</div>
+    <h1>Know your <em>room left</em> today.</h1>
+    <p class="tagline">The journal that stops you from blowing your prop account.</p>
+    <p class="lede">A Google Sheets (Excel-compatible) trading journal with a live “Room left today” meter, your prop rules, a futures position sizer and discipline tracking. One-time purchase. No subscription. No app to install.</p>
+
+    <div class="formbox">
+      <form class="wl" novalidate>
+        <div class="row">
+          <input type="email" name="email" placeholder="you@email.com" autocomplete="email" required aria-label="Email address">
+          <button class="btn" type="submit">Join the waitlist</button>
+        </div>
+        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="err" role="alert">Please enter a valid email.</div>
+        <p class="fine">We only use your email to tell you when FundedMeter launches. No spam, unsubscribe anytime.</p>
+      </form>
+      <div class="thanks" role="status"><b><span class="g">✓</span> You're on the waitlist.</b><p>We'll email you when FundedMeter launches, with your waitlist early-bird price ($12 instead of $19). Nothing to pay now.</p></div>
+    </div>
+    <p class="offerline">Waitlist early-bird: <b>$12</b> · <span style="white-space:nowrap">launch price $19</span> · <span style="white-space:nowrap">regular <s>$29</s></span></p>
+
+    <div class="shot">
+      <div class="frame">
+        <picture>
+          <source media="(max-width:640px)" srcset="img/dashboard-mobile.png">
+          <img src="img/dashboard.png" width="1600" height="1000" alt="FundedMeter dashboard mockup: Room left today meter showing $412 of $1,000 daily loss limit left, prop firm rules panel, position sizer, stats, equity curve with drawdown floor, discipline panel and P&L calendar">
+        </picture>
+      </div>
+      <div class="cap"><span class="tagd">⚑ <span>DEMO DATA</span> · fictional numbers</span><span>Design mockup — final template may differ.</span></div>
+    </div>
+  </div>
+</header>
+
+<section class="s" id="features">
+  <div class="wrap">
+    <div class="sh center" style="text-align:center">
+      <div class="eyebrow">What's inside</div>
+      <h2>Most prop accounts don't die on entries.<br class="hide-sm"> They die on math nobody's tracking.</h2>
+      <p>FundedMeter does the rule math for you, live, in a spreadsheet you own.</p>
+    </div>
+
+    <div class="feat">
+      <div class="txt">
+        <div class="num">01 · HEADLINE FEATURE</div>
+        <h3>The “Room left today” meter</h3>
+        <p>One big number: how much you can still lose today before you break your firm's rules. It takes whichever is tighter, your daily loss limit or your trailing drawdown floor.</p>
+        <ul>
+          <li><span><b class="g">Green</b> = full room. <b class="y">Yellow</b> = size down. <b class="r">Red</b> = done for the day.</span></li>
+          <li>Shows how many full stops you have left at your risk per trade</li>
+          <li>Updates the moment you log a trade</li>
+        </ul>
+      </div>
+      <div class="img y"><img src="img/hero-yellow.png" alt="Room left today meter at $412 of $1,000, yellow caution state" loading="lazy"></div>
+    </div>
+
+    <div class="feat rev">
+      <div class="txt">
+        <div class="num">02</div>
+        <h3>Prop rules panel, with <em style="font-style:normal" class="y">your</em> firm's numbers</h3>
+        <p>Type in the rules from your evaluation or funded account. No firm's rules are hard-coded, because firms change them.</p>
+        <ul>
+          <li>Daily loss limit with reset time</li>
+          <li>Max drawdown: static, trailing intraday or trailing end-of-day</li>
+          <li>Profit target progress and minimum trading days</li>
+        </ul>
+      </div>
+      <div class="img"><img src="img/rules.png" alt="Prop firm rules panel: daily loss limit, max trailing drawdown, profit target progress bars" loading="lazy"></div>
+    </div>
+
+    <div class="feat">
+      <div class="txt">
+        <div class="num">03</div>
+        <h3>Futures position sizer</h3>
+        <p>Type your stop in points. Get the max contracts that fit your risk per trade, rounded down. Point values for NQ, MNQ, ES and MES are preloaded.</p>
+        <ul>
+          <li>Flags when one contract already exceeds your risk rule</li>
+          <li>Warns when a trade risks more than today's room left</li>
+          <li>Shows the math, so you can check it</li>
+        </ul>
+      </div>
+      <div class="img narrow"><img src="img/sizer.png" alt="Position sizer: MNQ, 20 point stop, $200 risk gives max 5 contracts" loading="lazy"></div>
+    </div>
+
+    <div class="feat rev">
+      <div class="txt">
+        <div class="num">04</div>
+        <h3>Discipline tracking: the cost of rule breaks</h3>
+        <p>Tag each trade “rules followed: yes/no” and pick a reason. FundedMeter totals what breaking your own rules has cost you, by reason.</p>
+        <ul>
+          <li>Followed vs. broken P&amp;L, side by side</li>
+          <li>Itemized: revenge trades, moved stops, oversizing…</li>
+          <li>A rules-followed % you can work on</li>
+        </ul>
+      </div>
+      <div class="img narrow"><img src="img/disc.png" alt="Discipline panel: 78% rules followed, cost of rule breaks -$1,240 itemized" loading="lazy"></div>
+    </div>
+
+    <div class="chips">
+      <span>📈 Equity curve with drawdown floor</span><span>🗓️ P&amp;L calendar</span><span>📊 Win rate, profit factor, expectancy (R)</span><span>✅ Pre-trade checklist</span><span>📝 Trade log with R-multiples</span>
+    </div>
+  </div>
+</section>
+
+<section class="s gridbg" id="who">
+  <div class="wrap">
+    <div class="sh">
+      <div class="eyebrow">Who it's for</div>
+      <h2>Built for futures traders working under prop-firm rules.</h2>
+    </div>
+    <div class="who">
+      <div class="card"><div class="ic">🎯</div><h4>NQ / MNQ day traders</h4><p>In an evaluation or a funded account, trading Nasdaq futures or micros (ES/MES work too).</p></div>
+      <div class="card"><div class="ic">🧯</div><h4>Anyone who's failed an eval on a rule</h4><p>Daily loss limit, trailing drawdown, one oversized trade. You want to see the line before you cross it.</p></div>
+      <div class="card"><div class="ic">📄</div><h4>Spreadsheet people</h4><p>You'd rather own a Google Sheets (Excel-compatible) file than pay for another monthly journaling app.</p></div>
+    </div>
+    <div class="notfor"><b>Not for you if</b> you're looking for signals, trade ideas or a strategy. FundedMeter is a record-keeping and risk-math tool. It won't tell you what to trade.</div>
+  </div>
+</section>
+
+<section class="s" id="offer">
+  <div class="wrap">
+    <div class="sh">
+      <div class="eyebrow">Early-bird offer</div>
+      <h2>Join the waitlist, lock in the lowest price.</h2>
+      <p>We're building FundedMeter now. Waitlist members get first access and the early-bird price at launch. Nothing to pay today.</p>
+    </div>
+    <div class="offer">
+      <div class="price">
+        <div class="lbl">Waitlist early-bird</div>
+        <div class="big">$12<small>one-time</small></div>
+        <div class="ladder">
+          <div class="on"><span>Waitlist members</span><b class="g">$12</b></div>
+          <div><span>Launch price</span><span>$19</span></div>
+          <div><span>Regular price</span><s>$29</s></div>
+        </div>
+        <p class="note">Early-bird price available to waitlist members for a limited window at launch.</p>
+      </div>
+      <div class="card incl">
+        <h4>What you'll get</h4>
+        <ul>
+          <li>Google Sheets template (Excel-compatible)</li>
+          <li>Room-left meter, prop rules panel, position sizer</li>
+          <li>Trade log, stats, equity curve with drawdown floor, P&amp;L calendar</li>
+          <li>Discipline tracking + pre-trade checklist</li>
+          <li>Quick setup guide</li>
+          <li>Free v1 updates</li>
+        </ul>
+        <a class="btn" href="#join" style="margin-top:22px;width:100%">Join the waitlist</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="s gridbg" id="faq">
+  <div class="wrap">
+    <div class="sh center" style="text-align:center"><div class="eyebrow">FAQ</div><h2>Questions</h2></div>
+    <div class="faq">
+      <details open><summary>Is it an app?</summary><p>No. It's a Google Sheets template (Excel-compatible). You make a copy, enter your rules once, then log trades. Nothing to install, no account to create, no subscription.</p></details>
+      <details><summary>Does it work with my prop firm?</summary><p>It works with any prop firm's rules that you enter yourself: daily loss limit, static or trailing drawdown, profit target and minimum days. We don't hard-code any firm's rules (they change), and we're not affiliated with any prop firm.</p></details>
+      <details><summary>Does it connect to my broker or platform?</summary><p>Not in v1. You log trades in the sheet with drop-downs (instrument, direction, contracts, entry, stop, exit), and everything else calculates automatically.</p></details>
+      <details><summary>Only NQ / MNQ?</summary><p>It's built NQ-first, with NQ, MNQ, ES and MES point values preloaded. You can add other instruments in Settings.</p></details>
+      <details><summary>Is this financial advice?</summary><p>No. FundedMeter is an educational, record-keeping and calculation tool. It doesn't give signals, trade ideas or recommendations, and it can't guarantee you'll pass an evaluation or keep an account. Always check your firm's official rules.</p></details>
+      <details><summary>Are the numbers in the screenshots real?</summary><p>No. All dashboard numbers shown are fictional demo data, and the images are design mockups of the planned template.</p></details>
+      <details><summary>When does it launch, and what does joining cost?</summary><p>Joining is free. Waitlist members get one email when it launches, with the $12 early-bird link. If there isn't enough interest, we'll let you know and won't email you again.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="s final" id="join">
+  <div class="wrap">
+    <div class="eyebrow">Waitlist</div>
+    <h2>Stop guessing how much room you have left.</h2>
+    <p class="m" style="margin-top:12px;font-size:17px">Get the early-bird price ($12) when FundedMeter launches.</p>
+    <div class="formbox">
+      <form class="wl" novalidate>
+        <div class="row">
+          <input type="email" name="email" placeholder="you@email.com" autocomplete="email" required aria-label="Email address">
+          <button class="btn" type="submit">Join the waitlist</button>
+        </div>
+        <select name="trade" aria-label="What do you trade (optional)">
+          <option value="">What do you mainly trade? (optional)</option>
+          <option>NQ / MNQ</option><option>ES / MES</option><option>Other futures</option><option>Stocks / crypto</option><option>Not trading yet</option>
+        </select>
+        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="err" role="alert">Please enter a valid email.</div>
+        <p class="fine">We only use your email to tell you when FundedMeter launches. No spam, unsubscribe anytime.</p>
+      </form>
+      <div class="thanks" role="status"><b><span class="g">✓</span> You're on the waitlist.</b><p>We'll email you when FundedMeter launches, with your waitlist early-bird price ($12 instead of $19). Nothing to pay now.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="disc"><b style="color:#8b93a3">Disclaimer:</b> FundedMeter is an educational, record-keeping and calculation tool, not financial advice. It does not provide trade signals or recommendations and does not guarantee any trading result, evaluation pass or account outcome. All numbers shown in screenshots and videos are fictional demo data; images are design mockups. Futures trading involves substantial risk of loss and is not suitable for everyone. Not affiliated with, or endorsed by, any prop firm, broker or exchange. Always check your firm's official rules.</p>
+    <div class="row"><span>© 2026 FundedMeter · @fundedmeter</span><span>Contact: <!-- TODO: confirm contact email before publishing (fundedmeter@gmail.com is a placeholder) --><a href="mailto:fundedmeter@gmail.com">fundedmeter@gmail.com</a> · <a href="#top">Back to top ↑</a></span></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Tag signups with where they came from: ?src=tiktok-1  or ?utm_source=reels
+  const qs = new URLSearchParams(location.search);
+  const SOURCE = qs.get('src') || qs.get('utm_source') || qs.get('ref') || (document.referrer ? new URL(document.referrer).hostname : 'direct');
+  const validEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+
+  async function send(data){
+    if (!FORM_ENDPOINT) { console.info('[waitlist] FORM_ENDPOINT not set — showing thanks only. Data:', data); return; }
+    if (FORM_ENDPOINT.includes('docs.google.com/forms')) {
+      const fd = new FormData();
+      for (const k in GOOGLE_FORM_FIELDS) if (data[k]) fd.append(GOOGLE_FORM_FIELDS[k], data[k]);
+      await fetch(FORM_ENDPOINT, { method:'POST', mode:'no-cors', body:fd }); // Google returns an opaque response
+      return;
+    }
+    const fd = new FormData();
+    for (const k in data) fd.append(k, data[k]);
+    const res = await fetch(FORM_ENDPOINT, { method:'POST', body:fd, headers:{ 'Accept':'application/json' } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+  }
+
+  document.querySelectorAll('form.wl').forEach(form => {
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const box = form.closest('.formbox'), err = form.querySelector('.err'), btn = form.querySelector('button');
+      const email = form.email.value.trim();
+      if (form._gotcha.value) { box.classList.add('done'); return; }       // bot
+      if (!validEmail(email)) { err.textContent = 'Please enter a valid email.'; err.style.display = 'block'; form.email.focus(); return; }
+      err.style.display = 'none';
+      const data = { email, trade: form.trade ? form.trade.value : '', source: SOURCE, page: 'fundedmeter-waitlist-v1' };
+      if (TALLY_URL) { location.href = TALLY_URL + (TALLY_URL.includes('?') ? '&' : '?') + 'email=' + encodeURIComponent(email) + '&source=' + encodeURIComponent(SOURCE); return; }
+      btn.disabled = true; const label = btn.textContent; btn.textContent = 'Joining…';
+      try { await send(data); box.classList.add('done'); document.querySelectorAll('.formbox').forEach(b => b.classList.add('done')); }
+      catch (x) { err.textContent = 'Something went wrong. Please try again in a moment.'; err.style.display = 'block'; }
+      finally { btn.disabled = false; btn.textContent = label; }
+    });
+  });
+})();
+</script>
+</body>
+</html>
